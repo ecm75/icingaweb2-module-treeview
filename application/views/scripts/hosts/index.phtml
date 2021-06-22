@@ -1,0 +1,85 @@
+<?php
+
+use Icinga\Date\DateFormatter;
+use Icinga\Module\Monitoring\Object\Host;
+
+function secondsToTime($seconds) {
+    $dtF = new \DateTime('@0');
+    $dtT = new \DateTime("@$seconds");
+    return $dtF->diff($dtT)->format('%ad %hh %im %ss');
+}
+
+$stxt = array('OK', 'WARNING', 'CRITICAL', 'UNKNOWN');
+$sbg = array('ok','warning','critical','unknown');
+$hbg = array('ok','critical','critical');
+
+$srv = array();
+foreach ($this->services as $service) {
+	$srv[$service->host_name][] = $service;
+}
+
+if (! $this->compact): ?>
+<div class="controls">
+  <?= $tabs; ?>
+  <?= $this->paginator ?>
+  <div class="sort-controls-container">
+    <?= $this->limiter ?>
+    <?= $this->sortBox ?>
+  </div>
+  <?= $this->filterEditor ?>
+</div>
+<?php endif ?>
+
+<div class="content" data-base-target="_next">
+<table>
+<tr><th>Host</th><th>Service</th><th>Status</th><th>Last Check</th><th>Duration</th><th>Attempt</th><th>Status Information</th></tr>
+<?php
+foreach ($this->hosts as $host) {
+	$first = true;
+	if (array_key_exists($host->host_name, $srv)) {
+		foreach ($srv[$host->host_name] as $service) {
+			$duration = time() - $service->service_last_state_change;
+			if ($first === true) {
+				$first = false;
+				echo '<tr><td class="'.$hbg[$host->host_state].'">';
+				if ($host->host_icon_image != '') {
+					if (preg_match('/\./i', $host->host_icon_image)) {
+						echo '<img src="img/icons/'.$host->host_icon_image.'">';
+					} else {
+						echo '<i alt="" class="host-icon-image icon-'.$host->host_icon_image.'" title="" aria-hidden="true"></i>';
+					}
+				}
+				echo $this->qlink($host->host_name, 'monitoring/host/show', array('host' => $host->host_name));
+				echo '<td class="'.$sbg[$service->service_state].'">';
+				echo $this->qlink($service->service_description, 'monitoring/service/show', array('host' => $host->host_name, 'service' => $service->service_description));
+				if ($service->service_acknowledged) {
+					echo '<i role="img" title="Acknowledged" aria-label="Acknowledged" class="icon-ok right"></i>';
+					echo '</td><td class="'.$sbg[$service->service_state].'_status_handled centered">'.$stxt[$service->service_state].'</td>';
+				} else {
+					echo '</td><td class="'.$sbg[$service->service_state].'_status centered">'.$stxt[$service->service_state].'</td>';
+				}
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_state_change).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.secondsToTime($duration).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_attempt.'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_output.'</td></tr>';
+			} else {
+				echo '<tr><td></td><td class="'.$sbg[$service->service_state].'">';
+				echo $this->qlink($service->service_description, 'monitoring/service/show', array('host' => $host->host_name, 'service' => $service->service_description));
+				if ($service->service_acknowledged) {
+					echo '<i role="img" title="Acknowledged" aria-label="Acknowledged" class="icon-ok right"></i>';
+					echo '</td><td class="'.$sbg[$service->service_state].'_status_handled centered">'.$stxt[$service->service_state].'</td>';
+				} else {
+					echo '</td><td class="'.$sbg[$service->service_state].'_status centered">'.$stxt[$service->service_state].'</td>';
+				}
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_state_change).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.secondsToTime($duration).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_attempt.'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_output.'</td></tr>';
+			}
+		}
+	}
+	echo '<tr><td colspan="7"></td></tr>';
+}
+?>
+</table>
+</div>
