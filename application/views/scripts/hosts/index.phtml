@@ -58,7 +58,7 @@ foreach ($this->hosts as $host) {
 				} else {
 					echo '</td><td class="'.$sbg[$service->service_state].'_status centered">'.$stxt[$service->service_state].'</td>';
 				}
-				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_state_change).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_check).'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.secondsToTime($duration).'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_attempt.'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_output.'</td></tr>';
@@ -71,7 +71,7 @@ foreach ($this->hosts as $host) {
 				} else {
 					echo '</td><td class="'.$sbg[$service->service_state].'_status centered">'.$stxt[$service->service_state].'</td>';
 				}
-				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_state_change).'</td>';
+				echo '</td><td class="'.$sbg[$service->service_state].'">'.date("Y-m-d H:i:s",$service->service_last_check).'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.secondsToTime($duration).'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_attempt.'</td>';
 				echo '</td><td class="'.$sbg[$service->service_state].'">'.$service->service_output.'</td></tr>';

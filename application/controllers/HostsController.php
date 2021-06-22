@@ -82,6 +82,7 @@ class HostsController extends Controller {
 			'service_output',
 			'service_attempt',
 			'service_last_state_change' => $stateChangeColumn,
+			'service_last_check',
 			'service_icon_image',
 			'service_icon_image_alt',
 			'service_is_flapping',
