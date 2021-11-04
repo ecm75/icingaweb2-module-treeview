@@ -1,6 +1,12 @@
 <?php
+namespace Icinga\Module\Treeview {
 
-$this->menuSection('Treeview')
-     ->setIcon('sitemap')
-     ->add('Hosts')
-     ->setUrl('treeview/hosts');
+    use Icinga\Application\Version;
+
+    /** @var \Icinga\Application\Modules\Module $this */
+
+     $this->menuSection('Treeview')
+          ->setIcon('sitemap')
+		->setUrl('treeview/hosts');
+
+}
